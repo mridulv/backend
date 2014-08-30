@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import weka.core.Stopwords;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -214,6 +215,8 @@ public class sqlClass {
 
 	public JSONArray getTrendResult() throws ClassNotFoundException, SQLException, JSONException{
 		
+		Stopwords stopwords = new Stopwords();
+		
         Class.forName(dbClass);
         Connection connection = (Connection) DriverManager.getConnection(dbUrl, username, password);
         
@@ -248,13 +251,17 @@ public class sqlClass {
             
             String arrText[] = text.split(" ");
             for(String str:arrText){
-            	if (m1.containsKey(str)){
-            		int k = m1.get(str);
-            		m1.put(str, k+1);
-            	}
-            	else{
-            		m1.put(str, 1);
-            	}
+            	if (str.equals("trends"))
+            		System.out.println(rs.getString("id"));
+                if (!stopwords.is(str)) {
+	            	if (m1.containsKey(str)){
+	            		int k = m1.get(str);
+	            		m1.put(str, k+1);
+	            	}
+	            	else{
+	            		m1.put(str, 1);
+	            	}
+                }
             }
         }
         
@@ -264,15 +271,14 @@ public class sqlClass {
         	   double value = m1.get(key);
         	   
                String queryNew = "SELECT * FROM term_frequency WHERE keyword LIKE '"+key+"' ";
-               System.out.println(queryNew);
                Statement stmtNew = (Statement) connection.createStatement();
                ResultSet rsNew = stmtNew.executeQuery(queryNew);
                
                if (rsNew.absolute(1)){
             	   long num = rsNew.getLong("occurence");
-               	   System.out.println(num + " " + value);
+               	   //System.out.println(num + " " + value);
                	   value = value/num;
-               	   System.out.println(num + " " + value);
+               	   //System.out.println(num + " " + value);
                	   m2.put(key,value);
                }
         }

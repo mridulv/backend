@@ -93,9 +93,10 @@ public class App {
         int array[] = new int[numberOfEnty];
         
         JSONArray result = sqlclass.getResult();
-
+        
         int count=0;
         int i = 0;
+        
         
         for(i=0; i < result.length();i++){
         	
@@ -139,7 +140,7 @@ public class App {
     }
     
     public JSONArray getTrends() throws ClassNotFoundException, SQLException, JSONException{
-    	JSONArray result = sqlclass.getTrendResult2();
+    	JSONArray result = sqlclass.getTrendResult();
     	return result;
     }
     
