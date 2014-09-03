@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.stereotype.Controller;
@@ -14,14 +16,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import twitter4j.JSONArray;
-import twitter4j.JSONException;
-import twitter4j.JSONObject;
-import twitter4j.TwitterException;
+import twitter4j.*;
 
 @Controller
 @RequestMapping("/")
 public class APIController {
+	
+	static int p = 0;
+	static BlockingQueue<String> arr;
+	long sinceId = 0;
 
     @RequestMapping(value="/graph",method = RequestMethod.GET)
     public @ResponseBody String todo(
@@ -280,6 +283,24 @@ public class APIController {
 		}
 		return json.toString();
     	//return new Greeting(counter.incrementAndGet(),String.format(template, name),"new program");
+    }
+        
+    @RequestMapping(value="/ticker",method = RequestMethod.GET)
+    public @ResponseBody String ticker(
+    		@RequestParam(value="entity", required=false, defaultValue="apple") String entity) throws TwitterException {
+    	Twitter twitter = TwitterFactory.getSingleton();
+        Query query = new Query("@"+entity);
+        query.count(1);
+        query.setSinceId(sinceId);
+        QueryResult result = twitter.search(query);
+        if (result.getTweets().size() > 0){
+        	System.out.print(result.getCount());
+	        sinceId = result.getMaxId();
+	        System.out.println(result.getTweets().get(0).getText());
+			return result.getTweets().get(0).getText();
+        }
+        else
+        	return "empty";
     }
    
 }
