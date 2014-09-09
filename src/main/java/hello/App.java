@@ -148,7 +148,6 @@ public class App {
     
     public JSONObject getMap() throws ClassNotFoundException, SQLException, TwitterException, JSONException{
         
-        
         JSONObject result = sqlclass.getMapResult();
         return result;
     }
@@ -180,7 +179,7 @@ public class App {
     		json_in.put("time","2014-08-01:"+i );
     		json_in.put("val", i);
     		
-    		json.put(json_in);   		
+    		json.put(json_in);
     	}
     	
     	return json;

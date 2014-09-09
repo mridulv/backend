@@ -3,11 +3,14 @@ package hello;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+
 import weka.core.Stopwords;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,7 +92,7 @@ public class sqlClass {
         
         Date startDate = new Date();
         //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
-        String query = "SELECT * FROM analysis_tweets "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+        String query = "SELECT * FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
         
         if (!geo.equals("World"))
         	query = query + " and country LIKE '"+geo+"%'";
@@ -129,7 +132,7 @@ public class sqlClass {
         
         Date startDate = new Date();
         //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
-        String query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+        String query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
         
         if (!geo.equals("World"))
         	query = query + " and country LIKE '"+geo+"%'";
@@ -169,6 +172,7 @@ public class sqlClass {
 
         Class.forName(dbClass);
         Connection connection = (Connection) DriverManager.getConnection(dbUrl, username, password);
+        Statement stmt = (Statement) connection.createStatement();
         
         Date startDate = new Date();
         
@@ -176,7 +180,7 @@ public class sqlClass {
         
         if (pieVal == 0){
 		    //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
-		    String query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+		    String query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
 		    
 		    if (!geo.equals("World"))
 		    	query = query + " and country LIKE '"+geo+"%'";
@@ -187,7 +191,6 @@ public class sqlClass {
 		    
 		    System.out.println(query);
 		    
-		    Statement stmt = (Statement) connection.createStatement();
 		    ResultSet rs = stmt.executeQuery(query);
 		    
 		    rs.last();
@@ -217,11 +220,68 @@ public class sqlClass {
 				
 		    }
         }
-        else if(pieVal == 1){
-        	
-        }
-        else if(pieVal == 2){
-        	
+        else {
+        	String query = "SELECT * FROM analysis_tweets_new where key_val LIKE '120536157%'";
+
+            ResultSet rs = stmt.executeQuery(query);
+
+            Map<String, Integer> hashMap = new HashMap<String, Integer>();
+            hashMap.put("Mon",0);
+            hashMap.put("Tue",1);
+            hashMap.put("Wed",2);
+            hashMap.put("Thu",3);
+            hashMap.put("Fri",4);
+            hashMap.put("Sat",5);
+            hashMap.put("Sun",6);
+
+            Map<String, Integer> hashMap2 = new HashMap<String, Integer>();
+            hashMap2.put("male",0);
+            hashMap2.put("female",1);
+            hashMap2.put("unknown",2);
+            
+            double gender[] = new double[3];
+            double day[] = new double[7];
+
+            while (rs.next()){
+                String tim = rs.getString("timestamp");
+                String gen = rs.getString("groups");
+                double rating = rs.getDouble("rating");
+
+                String dayVal = tim.split(" ")[0];
+                Integer timeVal = Integer.valueOf(tim.split(" ")[3].substring(0,2));
+
+                gender[hashMap2.get(gen)] = gender[hashMap2.get(gen)] + rating;
+                day[hashMap.get(dayVal)] = day[hashMap.get(dayVal)] + rating;
+            }
+            
+            if (pieVal == 1){
+            	for(Map.Entry<String,Integer> entry : hashMap2.entrySet()){
+            		JSONObject json = new JSONObject();
+            		
+            		String key = entry.getKey();
+                	int value = entry.getValue();
+                	
+                	double val = gender[value];
+                	
+                	json.put("name",key);
+		        	json.put("y",val);
+		        	mainjson.put(json);
+            	}
+            }
+            else if (pieVal == 2){
+            	for(Map.Entry<String,Integer> entry : hashMap2.entrySet()){
+            		JSONObject json = new JSONObject();
+            		
+            		String key = entry.getKey();
+                	int value = entry.getValue();
+                	
+                	double val = gender[value];
+                	
+                	json.put("name",key);
+		        	json.put("y",val);
+		        	mainjson.put(json);
+            	}
+            }
         }
         
         System.out.println(mainjson.toString());
@@ -243,7 +303,7 @@ public class sqlClass {
         
         Date startDate = new Date();
         //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
-        String query = "SELECT * FROM analysis_tweets "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+        String query = "SELECT * FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
         
         if (!geo.equals("World"))
         	query = query + " and country LIKE '"+geo+"%'";

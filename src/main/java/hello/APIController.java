@@ -1,5 +1,6 @@
 package hello;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,6 +10,8 @@ import java.util.Date;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
+
+import opennlp.tools.util.InvalidFormatException;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -279,6 +282,24 @@ public class APIController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return json.toString();
+    	//return new Greeting(counter.incrementAndGet(),String.format(template, name),"new program");
+    }
+    
+    @RequestMapping(value="/sidebar",method = RequestMethod.GET)
+    public @ResponseBody String sidebar (
+    		@RequestParam(value="entity", required=false, defaultValue="apple") String entity) throws ClassNotFoundException, SQLException, TwitterException, JSONException, InvalidFormatException, IOException {
+     
+    	Date startDate;
+    	Date endDate;
+    	
+    	JSONArray json = new JSONArray();
+    	
+    	System.out.println("Time ananlysis for the Required Interval");
+    	
+    	SideBar sidebar = new SideBar(entity);
+    	json = sidebar.getSideBar();
+		
 		return json.toString();
     	//return new Greeting(counter.incrementAndGet(),String.format(template, name),"new program");
     }
