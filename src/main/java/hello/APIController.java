@@ -177,7 +177,6 @@ public class APIController {
             @RequestParam(value="gender", required=false, defaultValue="all") String gender ,
             @RequestParam(value="geo", required=false, defaultValue="all") String country) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
     	
-    	System.out.print("idhar aao");
     	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
      
     	Date startDate;
@@ -220,7 +219,6 @@ public class APIController {
             @RequestParam(value="gender", required=false, defaultValue="all") String gender ,
             @RequestParam(value="geo", required=false, defaultValue="all") String country) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
     	
-    	System.out.print("idhar aao");
     	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
      
     	Date startDate;
@@ -285,22 +283,22 @@ public class APIController {
     	//return new Greeting(counter.incrementAndGet(),String.format(template, name),"new program");
     }
         
-    @RequestMapping(value="/ticker",method = RequestMethod.GET)
-    public @ResponseBody String ticker(
-    		@RequestParam(value="entity", required=false, defaultValue="apple") String entity) throws TwitterException {
-    	Twitter twitter = TwitterFactory.getSingleton();
-        Query query = new Query("@"+entity);
-        query.count(1);
-        query.setSinceId(sinceId);
-        QueryResult result = twitter.search(query);
-        if (result.getTweets().size() > 0){
-        	System.out.print(result.getCount());
-	        sinceId = result.getMaxId();
-	        System.out.println(result.getTweets().get(0).getText());
-			return result.getTweets().get(0).getText();
-        }
-        else
-        	return "empty";
-    }
+//    @RequestMapping(value="/ticker",method = RequestMethod.GET)
+//    public @ResponseBody String ticker(
+//    		@RequestParam(value="entity", required=false, defaultValue="apple") String entity) throws TwitterException {
+//    	Twitter twitter = TwitterFactory.getSingleton();
+//        Query query = new Query("@"+entity);
+//        query.count(1);
+//        query.setSinceId(sinceId);
+//        QueryResult result = twitter.search(query);
+//        if (result.getTweets().size() > 0){
+//        	System.out.print(result.getCount());
+//	        sinceId = result.getMaxId();
+//	        System.out.println(result.getTweets().get(0).getText());
+//			return result.getTweets().get(0).getText();
+//        }
+//        else
+//        	return "empty";
+//    }
    
 }

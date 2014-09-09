@@ -34,8 +34,9 @@ public class sqlClass {
 	String gender;
 	long id;
 	int pieVal;
+	String init_query;
 	
-	public sqlClass(String Entity,long startTime,long endTime,String geo,String gender,long id){
+	public sqlClass(String Entity,long startTime,long endTime,String geo,String gender,long id,int hashPresent){
 		
 		this.dbUrl = "jdbc:mysql://localhost/test";
         this.dbClass = "com.mysql.jdbc.Driver";
@@ -49,11 +50,18 @@ public class sqlClass {
         this.id = id;
         this.pieVal = pieVal;
         
+        if (hashPresent == 0){
+        	init_query = "WHERE key_val LIKE '1"+String.valueOf(id)+"%'";
+        }
+        else{
+        	init_query = "WHERE tweet LIKE '%"+entity+"%'";
+        }
+        
 	}
 	
-	public sqlClass(String Entity,long startTime,long endTime,String geo,String gender,long id,int pieVal){
+	public sqlClass(String Entity,long startTime,long endTime,String geo,String gender,long id,int pieVal,int hashPresent){
 		
-		this.dbUrl = "jdbc:mysql://localhost/test";
+		this.dbUrl = "jdbc:mysql://localhost/test";	
         this.dbClass = "com.mysql.jdbc.Driver";
         this.username = "root";
         this.password = "";
@@ -64,6 +72,13 @@ public class sqlClass {
         this.geo = geo;
         this.id = id;
         this.pieVal = pieVal;
+        
+        if (hashPresent == 0){
+        	init_query = "WHERE key_val LIKE '1"+String.valueOf(id)+"%'";
+        }
+        else{
+        	init_query = "WHERE tweet LIKE '%"+entity+"%'";
+        }
         
 	}
 	
@@ -74,7 +89,7 @@ public class sqlClass {
         
         Date startDate = new Date();
         //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
-        String query = "SELECT * FROM analysis_tweets WHERE key_val LIKE '1"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
+        String query = "SELECT * FROM analysis_tweets "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
         
         if (!geo.equals("World"))
         	query = query + " and country LIKE '"+geo+"%'";
@@ -114,7 +129,7 @@ public class sqlClass {
         
         Date startDate = new Date();
         //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
-        String query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets WHERE key_val LIKE '1"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
+        String query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
         
         if (!geo.equals("World"))
         	query = query + " and country LIKE '"+geo+"%'";
@@ -161,7 +176,7 @@ public class sqlClass {
         
         if (pieVal == 0){
 		    //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
-		    String query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets WHERE key_val LIKE '1"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
+		    String query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
 		    
 		    if (!geo.equals("World"))
 		    	query = query + " and country LIKE '"+geo+"%'";
@@ -228,7 +243,7 @@ public class sqlClass {
         
         Date startDate = new Date();
         //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
-        String query = "SELECT * FROM analysis_tweets WHERE key_val LIKE '1"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
+        String query = "SELECT * FROM analysis_tweets "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
         
         if (!geo.equals("World"))
         	query = query + " and country LIKE '"+geo+"%'";

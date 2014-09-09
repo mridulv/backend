@@ -43,15 +43,25 @@ public class App {
     	this.location = location;
     	this.gender = gender;
     	
+    	int hashPresent = 0;
+    	
     	this.startTime = startDate.getTime()/1000;
     	this.endTime = endDate.getTime()/1000;
     	
-        Twitter twitter = new TwitterFactory().getInstance();
-        User user = twitter.showUser(entity);
-        
-        this.id = user.getId();
+    	if (entity.charAt(0) == '@'){
+    		Twitter twitter = new TwitterFactory().getInstance();
+    		entity = entity.substring(1,entity.length());
+            User user = twitter.showUser(entity);
+            
+            this.id = user.getId();
+            hashPresent = 0;
+    	}
+    	else if(entity.charAt(0) == '#'){
+    		entity = entity.substring(1,entity.length());
+    		hashPresent = 1;
+    	}
     	
-    	this.sqlclass = new sqlClass(Entity,startTime,endTime,this.location,this.gender,this.id);
+    	this.sqlclass = new sqlClass(Entity,startTime,endTime,this.location,this.gender,this.id,hashPresent);
     	
     	System.out.println(startDate + " " + startTime);
     	System.out.println(endTime);
@@ -70,12 +80,22 @@ public class App {
     	this.startTime = startDate.getTime()/1000;
     	this.endTime = endDate.getTime()/1000;
     	
-        Twitter twitter = new TwitterFactory().getInstance();
-        User user = twitter.showUser(entity);
-        
-        this.id = user.getId();
+    	int hashPresent = 0;
     	
-    	this.sqlclass = new sqlClass(Entity,startTime,endTime,this.location,this.gender,this.id,this.pieVal);
+    	if (entity.charAt(0) == '@'){
+    		Twitter twitter = new TwitterFactory().getInstance();
+        	entity = entity.substring(1,entity.length());
+            User user = twitter.showUser(entity);
+            
+            this.id = user.getId();
+            hashPresent = 0;
+    	}
+    	else if(entity.charAt(0) == '#'){
+        	entity = entity.substring(1,entity.length());
+    		hashPresent = 1;
+    	}
+    	
+    	this.sqlclass = new sqlClass(entity,startTime,endTime,this.location,this.gender,this.id,hashPresent);
     	
     	System.out.println(startDate + " " + startTime);
     	System.out.println(endTime);
@@ -165,10 +185,5 @@ public class App {
     	
     	return json;
     }
-
-    public Date getendDate() {
-        return endDate;
-    }
-    
 	
 }
