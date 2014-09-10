@@ -304,6 +304,38 @@ public class APIController {
     	//return new Greeting(counter.incrementAndGet(),String.format(template, name),"new program");
     }
         
+    @RequestMapping(value="/mainbar",method = RequestMethod.GET)
+    public @ResponseBody String mainbar (
+    		@RequestParam(value="entity", required=false, defaultValue="apple") String entity,
+            @RequestParam(value="start", required=false, defaultValue="2014-08-01") String start,
+            @RequestParam(value="end", required=false, defaultValue="2014-08-02") String end ,
+            @RequestParam(value="gender", required=false, defaultValue="all") String gender ,
+            @RequestParam(value="geo", required=false, defaultValue="all") String country) throws ClassNotFoundException, SQLException, TwitterException, JSONException, InvalidFormatException, IOException {
+     
+    	System.out.println(entity);
+    	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        
+    	Date startDate;
+    	Date endDate;
+    	
+    	JSONArray json = new JSONArray();
+		try {
+			startDate = formatter.parse(start);
+	    	endDate = formatter.parse(end);
+	    	System.out.println(startDate);
+	    	System.out.println(endDate);
+	    	System.out.println("Time ananlysis for the Required Interval");
+	    	
+	    	MainBar app = new MainBar(entity,startDate,endDate,country,gender);
+	    	json = app.getMainBar();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return json.toString();
+    	//return new Greeting(counter.incrementAndGet(),String.format(template, name),"new program");
+    }
+    
 //    @RequestMapping(value="/ticker",method = RequestMethod.GET)
 //    public @ResponseBody String ticker(
 //    		@RequestParam(value="entity", required=false, defaultValue="apple") String entity) throws TwitterException {
