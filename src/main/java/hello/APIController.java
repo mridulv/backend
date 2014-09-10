@@ -303,7 +303,25 @@ public class APIController {
 		return json.toString();
     	//return new Greeting(counter.incrementAndGet(),String.format(template, name),"new program");
     }
-        
+     
+    @RequestMapping(value="/usersidebar",method = RequestMethod.GET)
+    public @ResponseBody String userSideBar (
+    		@RequestParam(value="entity", required=false, defaultValue="apple") String entity) throws ClassNotFoundException, SQLException, TwitterException, JSONException, InvalidFormatException, IOException {
+     
+    	Date startDate;
+    	Date endDate;
+    	
+    	JSONArray json = new JSONArray();
+    	
+    	System.out.println("Time ananlysis for the Required Interval");
+    	
+    	UserSideBar sidebar = new UserSideBar(entity);
+    	json = sidebar.getUserSideBar();
+		
+		return json.toString();
+    	//return new Greeting(counter.incrementAndGet(),String.format(template, name),"new program");
+    }
+    
     @RequestMapping(value="/mainbar",method = RequestMethod.GET)
     public @ResponseBody String mainbar (
     		@RequestParam(value="entity", required=false, defaultValue="apple") String entity,
@@ -336,22 +354,29 @@ public class APIController {
     	//return new Greeting(counter.incrementAndGet(),String.format(template, name),"new program");
     }
     
-//    @RequestMapping(value="/ticker",method = RequestMethod.GET)
-//    public @ResponseBody String ticker(
-//    		@RequestParam(value="entity", required=false, defaultValue="apple") String entity) throws TwitterException {
-//    	Twitter twitter = TwitterFactory.getSingleton();
-//        Query query = new Query("@"+entity);
-//        query.count(1);
-//        query.setSinceId(sinceId);
-//        QueryResult result = twitter.search(query);
-//        if (result.getTweets().size() > 0){
-//        	System.out.print(result.getCount());
-//	        sinceId = result.getMaxId();
-//	        System.out.println(result.getTweets().get(0).getText());
-//			return result.getTweets().get(0).getText();
-//        }
-//        else
-//        	return "empty";
-//    }
-   
+    @RequestMapping(value="/usertweet",method = RequestMethod.GET)
+    public @ResponseBody String usertweet (
+    		@RequestParam(value="entity", required=false, defaultValue="apple") String entity,
+    		@RequestParam(value="value", required=false, defaultValue="0") String val) throws ClassNotFoundException, SQLException, TwitterException, JSONException, InvalidFormatException, IOException {
+    	
+    	JSONArray json = new JSONArray();
+		System.out.println("Time ananlysis for the Required Interval");
+		
+		int value = Integer.valueOf(val);
+		UserGraph usergraph = new UserGraph(entity,value);
+		json = usergraph.getUserGraph();
+		return json.toString();
+    }
+    
+    @RequestMapping(value="/tweetrating",method = RequestMethod.GET)
+    public @ResponseBody String tweetRating (
+    		@RequestParam(value="entity", required=false, defaultValue="apple") String entity,
+    		@RequestParam(value="tweet", required=false, defaultValue="apple") String tweet) throws ClassNotFoundException, SQLException, TwitterException, JSONException, InvalidFormatException, IOException {
+    	
+		System.out.println("Time ananlysis for the Required Interval");
+		
+		TweetRating usergraph = new TweetRating(entity,tweet);
+		double retweet_count = usergraph.getTweetRating();
+		return String.valueOf(retweet_count);
+    }
 }

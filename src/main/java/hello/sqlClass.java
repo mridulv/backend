@@ -94,7 +94,7 @@ public class sqlClass {
         //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
         String query = "SELECT * FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
         
-        if (!geo.equals("World"))
+        if (!geo.equals("world"))
         	query = query + " and country LIKE '"+geo+"%'";
         if (!gender.equals("all"))
         	query = query + " and groups LIKE '"+gender+"%'";
@@ -134,7 +134,7 @@ public class sqlClass {
         //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
         String query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
         
-        if (!geo.equals("World"))
+        if (!geo.equals("world"))
         	query = query + " and country LIKE '"+geo+"%'";
         if (!gender.equals("all"))
         	query = query + " and groups LIKE '"+gender+"%'";
@@ -182,7 +182,7 @@ public class sqlClass {
 		    //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
 		    String query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
 		    
-		    if (!geo.equals("World"))
+		    if (!geo.equals("world"))
 		    	query = query + " and country LIKE '"+geo+"%'";
 		    if (!gender.equals("all"))
 		    	query = query + " and groups LIKE '"+gender+"%'";
@@ -305,7 +305,7 @@ public class sqlClass {
         //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
         String query = "SELECT * FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
         
-        if (!geo.equals("World"))
+        if (!geo.equals("world"))
         	query = query + " and country LIKE '"+geo+"%'";
         if (!gender.equals("all"))
         	query = query + " and groups LIKE '"+gender+"%'";
@@ -392,9 +392,9 @@ public JSONArray getTrendResult2() throws ClassNotFoundException, SQLException, 
         
         Date startDate = new Date();
         //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
-        String query = "SELECT * FROM analysis_tweets WHERE key_val LIKE '1"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
+        String query = "SELECT * FROM analysis_tweets_new WHERE key_val LIKE '1"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
         
-        if (!geo.equals("World"))
+        if (!geo.equals("world"))
         	query = query + " and country LIKE '"+geo+"%'";
         if (!gender.equals("all"))
         	query = query + " and groups LIKE '"+gender+"%'";

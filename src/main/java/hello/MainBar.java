@@ -109,7 +109,7 @@ public class MainBar {
 		String query = "SELECT * FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
         System.out.println(query);
         
-        if (!geo.equals("World"))
+        if (!geo.equals("world"))
         	query = query + " and country LIKE '"+geo+"%'";
         if (!gender.equals("all"))
         	query = query + " and groups LIKE '"+gender+"%'";
@@ -123,7 +123,7 @@ public class MainBar {
 		String query = "SELECT * FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
 		System.out.println(query);
         
-        if (!geo.equals("World"))
+        if (!geo.equals("world"))
         	query = query + " and country LIKE '"+geo+"%'";
         if (!gender.equals("all"))
         	query = query + " and groups LIKE '"+gender+"%'";
@@ -164,10 +164,12 @@ public class MainBar {
                 break;
             System.out.println("the maximum influential user id " + entry.getKey() + " with a score of " + entry.getValue());
             JSONObject json = new JSONObject();
-            json.put("user", getUser(entry.getKey()));
-            json.put("score", entry.getValue());
-            mainjson.put(json);
-            count++;
+            if (!getUser(entry.getKey()).equals("unknown")){
+	            json.put("user", getUser(entry.getKey()));
+	            json.put("score", entry.getValue());
+	            mainjson.put(json);
+	            count++;
+            }
         }
 		
 		return mainjson;
@@ -237,10 +239,12 @@ public class MainBar {
             if (!rs2.next()){
                 System.out.println("the maximum correlated user id " + entry.getKey() + " with a score of " + entry.getValue());
                 JSONObject json = new JSONObject();
-                json.put("user", getUser(entry.getKey()));
-                json.put("score", entry.getValue());
-                mainjson.put(json);
-                count++;
+                if (!getUser(entry.getKey()).equals("unknown")){
+	                json.put("user", getUser(entry.getKey()));
+	                json.put("score", entry.getValue());
+	                mainjson.put(json);
+	                count++;
+                }
             }
         }
 		return mainjson;
@@ -320,10 +324,18 @@ public class MainBar {
         return sorted_map;
     }
 	
-	private String getUser(long id) throws TwitterException{
+	private String getUser(long id){
 		Twitter twitter = new TwitterFactory().getInstance();
-		User user = twitter.showUser(id);
-		return user.getName();
+		System.out.println(id);
+		User user;
+		try {
+			user = twitter.showUser(id);
+			return user.getScreenName();
+		} catch (TwitterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "unknown";
+		}
 	}
 	
 }
