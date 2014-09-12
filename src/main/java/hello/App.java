@@ -33,8 +33,9 @@ public class App {
 	private sqlClass sqlclass;
 	private long id;
 	private int pieVal;
+	private String analysis;
 	
-    public App(String Entity,Date startDate,Date endDate,String location, String gender) throws TwitterException {
+    public App(String Entity,Date startDate,Date endDate,String location, String gender,String analysis) throws TwitterException {
     	this.startDate = startDate;
     	this.endDate = endDate;
     	this.location = location;
@@ -42,6 +43,7 @@ public class App {
     	this.entity = Entity;
     	this.location = location;
     	this.gender = gender;
+    	this.analysis = analysis;
     	
     	int hashPresent = 0;
     	
@@ -61,13 +63,13 @@ public class App {
     		hashPresent = 1;
     	}
     	
-    	this.sqlclass = new sqlClass(Entity,startTime,endTime,this.location,this.gender,this.id,hashPresent);
+    	this.sqlclass = new sqlClass(Entity,startTime,endTime,this.location,this.gender,this.id,hashPresent,analysis);
     	
     	System.out.println(startDate + " " + startTime);
     	System.out.println(endTime);
     }
     
-    public App(String Entity,Date startDate,Date endDate,String location, String gender,int pieVal) throws TwitterException {
+    public App(String Entity,Date startDate,Date endDate,String location, String gender,int pieVal,String analysis) throws TwitterException {
     	this.startDate = startDate;
     	this.endDate = endDate;
     	this.location = location;
@@ -95,7 +97,7 @@ public class App {
     		hashPresent = 1;
     	}
     	
-    	this.sqlclass = new sqlClass(entity,startTime,endTime,this.location,this.gender,this.id,hashPresent);
+    	this.sqlclass = new sqlClass(entity,startTime,endTime,this.location,this.gender,this.id,hashPresent,analysis);
     	
     	System.out.println(startDate + " " + startTime);
     	System.out.println(endTime);
@@ -110,7 +112,7 @@ public class App {
         
         Date startDate = new Date();
         
-        int array[] = new int[numberOfEnty];
+        double array[] = new double[numberOfEnty];
         
         JSONArray result = sqlclass.getResult();
         
@@ -122,14 +124,15 @@ public class App {
         	
             JSONObject json = result.getJSONObject(i);
             long seconds = json.getLong("second");
+            double value_main = Double.valueOf(json.getString("value"));
             int val = (int)((((double)seconds-(double)startTime)/((double)endTime-(double)startTime))*numberOfEnty); 
-            array[val] += 1;
+            array[val] += value_main;
             count++;
         }
 
         JSONArray json = new JSONArray();
     	
-        int check = 0;
+        double check = 0;
         
     	for (i = 0;i < array.length ;i ++){
     		

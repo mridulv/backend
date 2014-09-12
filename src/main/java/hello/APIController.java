@@ -30,12 +30,13 @@ public class APIController {
 	long sinceId = 0;
 
     @RequestMapping(value="/graph",method = RequestMethod.GET)
-    public @ResponseBody String todo(
+    public @ResponseBody String todo_main(
     		@RequestParam(value="entity", required=false, defaultValue="apple") String entity,
             @RequestParam(value="start", required=false, defaultValue="2014-08-01") String start,
             @RequestParam(value="end", required=false, defaultValue="2014-08-02") String end ,
             @RequestParam(value="gender", required=false, defaultValue="all") String gender ,
-            @RequestParam(value="geo", required=false, defaultValue="all") String country) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
+            @RequestParam(value="geo", required=false, defaultValue="all") String country,
+            @RequestParam(value="analysis", required=false, defaultValue="mention") String analysis) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
     	
     	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
      
@@ -51,7 +52,7 @@ public class APIController {
 	    	System.out.println(endDate);
 	    	System.out.println("Time ananlysis for the Required Interval");
 	    	
-	    	App app = new App(entity,startDate,endDate,country,gender);
+	    	App app = new App(entity,startDate,endDate,country,gender,analysis);
 	    	json = app.getData();
 	    	mainjson.put(json);
 		} catch (ParseException e) {
@@ -63,12 +64,13 @@ public class APIController {
     }
     
     @RequestMapping(value="/map",method = RequestMethod.GET)
-    public @ResponseBody String todo_map(
+    public @ResponseBody String todo_mainMap(
     		@RequestParam(value="entity", required=false, defaultValue="apple") String entity,
             @RequestParam(value="start", required=false, defaultValue="2014-08-01") String start,
             @RequestParam(value="end", required=false, defaultValue="2014-08-02") String end ,
             @RequestParam(value="gender", required=false, defaultValue="all") String gender ,
-            @RequestParam(value="geo", required=false, defaultValue="all") String country) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
+            @RequestParam(value="geo", required=false, defaultValue="all") String country,
+            @RequestParam(value="analysis", required=false, defaultValue="mention") String analysis) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
     	
     	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         
@@ -84,7 +86,7 @@ public class APIController {
 	    	System.out.println(endDate);
 	    	System.out.println("Time ananlysis for the Required Interval");
 	    	
-	    	App app = new App(entity,startDate,endDate,country,gender);
+	    	App app = new App(entity,startDate,endDate,country,gender,analysis);
 	    	json = app.getMap();
 	    	mainjson.put(json);
 		} catch (ParseException e) {
@@ -97,13 +99,14 @@ public class APIController {
     }
     
     @RequestMapping(value="/pie",method = RequestMethod.GET)
-    public @ResponseBody String todo_pie(
+    public @ResponseBody String todo_mainPie(
     		@RequestParam(value="pie", required=false, defaultValue="0") int pieVal,
     		@RequestParam(value="entity", required=false, defaultValue="apple") String entity,
             @RequestParam(value="start", required=false, defaultValue="2014-08-01") String start,
             @RequestParam(value="end", required=false, defaultValue="2014-08-02") String end ,
             @RequestParam(value="gender", required=false, defaultValue="all") String gender ,
-            @RequestParam(value="geo", required=false, defaultValue="all") String country) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
+            @RequestParam(value="geo", required=false, defaultValue="all") String country,
+            @RequestParam(value="analysis", required=false, defaultValue="mention") String analysis) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
     	
     	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         
@@ -118,7 +121,7 @@ public class APIController {
 	    	System.out.println(endDate);
 	    	System.out.println("Time ananlysis for the Required Interval");
 	    	
-	    	App app = new App(entity,startDate,endDate,country,gender,pieVal);
+	    	App app = new App(entity,startDate,endDate,country,gender,pieVal,analysis);
 	    	json = app.getPie();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -136,7 +139,8 @@ public class APIController {
             @RequestParam(value="start", required=false, defaultValue="2014-08-01") String start,
             @RequestParam(value="end", required=false, defaultValue="2014-08-02") String end ,
             @RequestParam(value="gender", required=false, defaultValue="all") String gender ,
-            @RequestParam(value="geo", required=false, defaultValue="all") String country) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
+            @RequestParam(value="geo", required=false, defaultValue="all") String country,
+            @RequestParam(value="analysis", required=false, defaultValue="mention") String analysis) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
     	
     	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
      
@@ -154,8 +158,8 @@ public class APIController {
 	    	System.out.println(endDate);
 	    	System.out.println("Time ananlysis for the Required Interval");
 	    	
-	    	App app = new App(entity,startDate,endDate,country,gender);
-	    	App app2 = new App(entity2,startDate,endDate,country,gender);
+	    	App app = new App(entity,startDate,endDate,country,gender,analysis);
+	    	App app2 = new App(entity2,startDate,endDate,country,gender,analysis);
 	    	
 	    	json = app.getData();
 	    	json2 = app2.getData();
@@ -178,7 +182,8 @@ public class APIController {
             @RequestParam(value="start", required=false, defaultValue="2014-08-01") String start,
             @RequestParam(value="end", required=false, defaultValue="2014-08-02") String end ,
             @RequestParam(value="gender", required=false, defaultValue="all") String gender ,
-            @RequestParam(value="geo", required=false, defaultValue="all") String country) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
+            @RequestParam(value="geo", required=false, defaultValue="all") String country,
+            @RequestParam(value="analysis", required=false, defaultValue="mention") String analysis) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
     	
     	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
      
@@ -196,8 +201,8 @@ public class APIController {
 	    	System.out.println(endDate);
 	    	System.out.println("Time ananlysis for the Required Interval");
 	    	
-	    	App app = new App(entity,startDate,endDate,country,gender);
-	    	App app2 = new App(entity2,startDate,endDate,country,gender);
+	    	App app = new App(entity,startDate,endDate,country,gender,analysis);
+	    	App app2 = new App(entity2,startDate,endDate,country,gender,analysis);
 	    	
 	    	json = app.getMap();
 	    	json2 = app2.getMap();
@@ -220,7 +225,8 @@ public class APIController {
             @RequestParam(value="start", required=false, defaultValue="2014-08-01") String start,
             @RequestParam(value="end", required=false, defaultValue="2014-08-02") String end ,
             @RequestParam(value="gender", required=false, defaultValue="all") String gender ,
-            @RequestParam(value="geo", required=false, defaultValue="all") String country) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
+            @RequestParam(value="geo", required=false, defaultValue="all") String country,
+            @RequestParam(value="analysis", required=false, defaultValue="mention") String analysis) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
     	
     	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
      
@@ -238,8 +244,8 @@ public class APIController {
 	    	System.out.println(endDate);
 	    	System.out.println("Time ananlysis for the Required Interval");
 	    	
-	    	App app = new App(entity,startDate,endDate,country,gender);
-	    	App app2 = new App(entity2,startDate,endDate,country,gender);
+	    	App app = new App(entity,startDate,endDate,country,gender,analysis);
+	    	App app2 = new App(entity2,startDate,endDate,country,gender,analysis);
 	    	
 	    	json = app.getMap();
 	    	json2 = app2.getMap();
@@ -252,37 +258,6 @@ public class APIController {
 			e.printStackTrace();
 		}
 		return mainjson.toString();
-    	//return new Greeting(counter.incrementAndGet(),String.format(template, name),"new program");
-    }
-    
-    @RequestMapping(value="/trending",method = RequestMethod.GET)
-    public @ResponseBody String trends(
-    		@RequestParam(value="entity", required=false, defaultValue="apple") String entity,
-            @RequestParam(value="start", required=false, defaultValue="2014-08-01") String start,
-            @RequestParam(value="end", required=false, defaultValue="2014-08-02") String end ,
-            @RequestParam(value="gender", required=false, defaultValue="all") String gender ,
-            @RequestParam(value="geo", required=false, defaultValue="all") String country) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
-    	
-    	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-     
-    	Date startDate;
-    	Date endDate;
-    	
-    	JSONArray json = new JSONArray();
-		try {
-			startDate = formatter.parse(start);
-	    	endDate = formatter.parse(end);
-	    	System.out.println(startDate);
-	    	System.out.println(endDate);
-	    	System.out.println("Time ananlysis for the Required Interval");
-	    	
-	    	App app = new App(entity,startDate,endDate,country,gender);
-	    	json = app.getTrends();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return json.toString();
     	//return new Greeting(counter.incrementAndGet(),String.format(template, name),"new program");
     }
     

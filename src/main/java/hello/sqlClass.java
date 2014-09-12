@@ -38,13 +38,16 @@ public class sqlClass {
 	long id;
 	int pieVal;
 	String init_query;
+	int type_graph;
+	int analysis;
 	
-	public sqlClass(String Entity,long startTime,long endTime,String geo,String gender,long id,int hashPresent){
+	public sqlClass(String Entity,long startTime,long endTime,String geo,String gender,long id,int hashPresent,String analysis){
 		
 		this.dbUrl = "jdbc:mysql://localhost/test";
         this.dbClass = "com.mysql.jdbc.Driver";
         this.username = "root";
         this.password = "";
+        this.type_graph = 0;
         this.entity = Entity;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -52,6 +55,19 @@ public class sqlClass {
         this.geo = geo;
         this.id = id;
         this.pieVal = pieVal;
+        
+        if (analysis.equals("mention")){
+        	this.analysis = 0;
+        }
+        else if (analysis.equals("positive")){
+        	this.analysis = 1;
+        }
+        else if (analysis.equals("negative")){
+        	this.analysis = 2;
+        }
+        else if (analysis.equals("popularity")){
+        	this.analysis = 3;
+        }
         
         if (hashPresent == 0){
         	init_query = "WHERE key_val LIKE '1"+String.valueOf(id)+"%'";
@@ -62,7 +78,7 @@ public class sqlClass {
         
 	}
 	
-	public sqlClass(String Entity,long startTime,long endTime,String geo,String gender,long id,int pieVal,int hashPresent){
+	public sqlClass(String Entity,long startTime,long endTime,String geo,String gender,long id,int pieVal,int hashPresent,String analysis){
 		
 		this.dbUrl = "jdbc:mysql://localhost/test";	
         this.dbClass = "com.mysql.jdbc.Driver";
@@ -75,6 +91,19 @@ public class sqlClass {
         this.geo = geo;
         this.id = id;
         this.pieVal = pieVal;
+        
+        if (analysis.equals("mention")){
+        	this.analysis = 0;
+        }
+        else if (analysis.equals("positive")){
+        	this.analysis = 1;
+        }
+        else if (analysis.equals("negative")){
+        	this.analysis = 2;
+        }
+        else if (analysis.equals("popularity")){
+        	this.analysis = 3;
+        }
         
         if (hashPresent == 0){
         	init_query = "WHERE key_val LIKE '1"+String.valueOf(id)+"%'";
@@ -118,6 +147,24 @@ public class sqlClass {
             json_in.put("text", text);
     		json_in.put("second", seconds);
     		
+    		if (analysis == 0)
+    			json_in.put("value", String.valueOf(1));
+    		else if (analysis == 1){
+    			double sentiment = rs.getDouble("sentiment");
+    			sentiment = sentiment > 0 ? sentiment : 0;
+    			json_in.put("value", String.valueOf(sentiment));
+    		}
+    		else if (analysis == 2){
+    			double sentiment = rs.getDouble("sentiment");
+    			sentiment = sentiment < 0 ? sentiment : 0;
+    			json_in.put("value", String.valueOf(sentiment));
+    		}
+    		else{
+    			double rating = rs.getDouble("rating");
+    			double sentiment = rs.getDouble("sentiment");
+    			json_in.put("value", String.valueOf(rating*sentiment));
+    		}
+    		
     		json.put(json_in);  
         }
         
@@ -132,7 +179,19 @@ public class sqlClass {
         
         Date startDate = new Date();
         //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
-        String query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+        String query;
+        if (analysis == 0){
+        	query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+        }
+		else if (analysis == 1){
+			query = "SELECT sum(sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " and sentiment > 0";
+		}
+		else if (analysis == 2){
+			query = "SELECT sum(sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " and sentiment < 0";
+		}
+		else{
+			query = "SELECT sum(rating*sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+		}
         
         if (!geo.equals("world"))
         	query = query + " and country LIKE '"+geo+"%'";
@@ -154,7 +213,7 @@ public class sqlClass {
             
             String text = rs.getString("ids");
             System.out.println(text);
-            int occur = rs.getInt("val");
+            double occur = Math.abs(rs.getDouble("val"));
             String country = rs.getString("country");
 
             if (country.length() < 5 && country.length() > 0){
@@ -180,7 +239,19 @@ public class sqlClass {
         
         if (pieVal == 0){
 		    //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
-		    String query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+		    String query;
+	        if (analysis == 0){
+	        	query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+	        }
+			else if (analysis == 1){
+				query = "SELECT sum(sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " and sentiment > 0";
+			}
+			else if (analysis == 2){
+				query = "SELECT sum(sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " and sentiment < 0";
+			}
+			else{
+				query = "SELECT sum(rating*sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+			}
 		    
 		    if (!geo.equals("world"))
 		    	query = query + " and country LIKE '"+geo+"%'";
@@ -207,7 +278,7 @@ public class sqlClass {
 			    
 		        String text = rs.getString("ids");
 		        System.out.println(text);
-		        int occur = rs.getInt("val");
+		        double occur = Math.abs(rs.getDouble("val"));
 		        String country = rs.getString("country");
 		
 		        if (country.length() < 5 && country.length() > 0){
@@ -221,7 +292,7 @@ public class sqlClass {
 		    }
         }
         else {
-        	String query = "SELECT * FROM analysis_tweets_new where key_val LIKE '120536157%'";
+        	String query = "SELECT * FROM analysis_tweets_new where key_val "+init_query+"";
 
             ResultSet rs = stmt.executeQuery(query);
 
