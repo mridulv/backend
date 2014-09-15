@@ -229,6 +229,7 @@ public class sqlClass {
 	
 	public JSONArray getPieResult() throws TwitterException, ClassNotFoundException, SQLException, JSONException{
 
+		System.out.println("sssss");
         Class.forName(dbClass);
         Connection connection = (Connection) DriverManager.getConnection(dbUrl, username, password);
         Statement stmt = (Statement) connection.createStatement();
@@ -292,7 +293,8 @@ public class sqlClass {
 		    }
         }
         else {
-        	String query = "SELECT * FROM analysis_tweets_new where key_val "+init_query+"";
+        	String query = "SELECT * FROM analysis_tweets_new "+init_query+"";
+        	System.out.println(query);
 
             ResultSet rs = stmt.executeQuery(query);
 
@@ -320,9 +322,13 @@ public class sqlClass {
 
                 String dayVal = tim.split(" ")[0];
                 Integer timeVal = Integer.valueOf(tim.split(" ")[3].substring(0,2));
+                
+                if (hashMap2.get(gen) == null)
+                	gender[2] = gender[2] + rating;
+                else
+                	gender[hashMap2.get(gen)] = gender[hashMap2.get(gen)] + rating;
 
-                gender[hashMap2.get(gen)] = gender[hashMap2.get(gen)] + rating;
-                day[hashMap.get(dayVal)] = day[hashMap.get(dayVal)] + rating;
+            	day[hashMap.get(dayVal)] = day[hashMap.get(dayVal)] + rating;
             }
             
             if (pieVal == 1){
@@ -340,13 +346,13 @@ public class sqlClass {
             	}
             }
             else if (pieVal == 2){
-            	for(Map.Entry<String,Integer> entry : hashMap2.entrySet()){
+            	for(Map.Entry<String,Integer> entry : hashMap.entrySet()){
             		JSONObject json = new JSONObject();
             		
             		String key = entry.getKey();
                 	int value = entry.getValue();
                 	
-                	double val = gender[value];
+                	double val = day[value];
                 	
                 	json.put("name",key);
 		        	json.put("y",val);

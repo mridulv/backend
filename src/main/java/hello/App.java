@@ -97,7 +97,7 @@ public class App {
     		hashPresent = 1;
     	}
     	
-    	this.sqlclass = new sqlClass(entity,startTime,endTime,this.location,this.gender,this.id,hashPresent,analysis);
+    	this.sqlclass = new sqlClass(entity,startTime,endTime,this.location,this.gender,this.id,this.pieVal,hashPresent,analysis);
     	
     	System.out.println(startDate + " " + startTime);
     	System.out.println(endTime);

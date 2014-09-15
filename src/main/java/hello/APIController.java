@@ -109,6 +109,7 @@ public class APIController {
             @RequestParam(value="analysis", required=false, defaultValue="mention") String analysis) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
     	
     	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    	System.out.println(pieVal);
         
     	Date startDate;
     	Date endDate;
@@ -220,6 +221,7 @@ public class APIController {
     
     @RequestMapping(value="/piecompare",method = RequestMethod.GET)
     public @ResponseBody String todo_pie(
+    		@RequestParam(value="pie", required=false, defaultValue="0") int pieVal,
     		@RequestParam(value="entity", required=false, defaultValue="twitter") String entity,
     		@RequestParam(value="entity2", required=false, defaultValue="facebook") String entity2,
             @RequestParam(value="start", required=false, defaultValue="2014-08-01") String start,
@@ -252,6 +254,131 @@ public class APIController {
 	    	
 	    	mainjson.put(json);
 	    	mainjson.put(json2);
+	    	
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return mainjson.toString();
+    	//return new Greeting(counter.incrementAndGet(),String.format(template, name),"new program");
+    }
+    
+    @RequestMapping(value="/compare_timeline",method = RequestMethod.GET)
+    public @ResponseBody String todo_compare(
+    		@RequestParam(value="entity", required=false, defaultValue="twitter") String entities,
+            @RequestParam(value="start", required=false, defaultValue="2014-08-01") String start,
+            @RequestParam(value="end", required=false, defaultValue="2014-08-02") String end ,
+            @RequestParam(value="gender", required=false, defaultValue="all") String gender ,
+            @RequestParam(value="geo", required=false, defaultValue="all") String country,
+            @RequestParam(value="analysis", required=false, defaultValue="mention") String analysis) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
+    	
+    	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+     
+    	Date startDate;
+    	Date endDate;
+    	
+    	String en[] = entities.split(",");
+    	
+    	JSONArray mainjson = new JSONArray();
+    	
+    	JSONArray json = new JSONArray();
+		try {
+			for (String entity : en){
+				startDate = formatter.parse(start);
+		    	endDate = formatter.parse(end);
+		    	System.out.println(startDate);
+		    	System.out.println(endDate);
+		    	System.out.println("Time ananlysis for the Required Interval iisiiss");
+		    	System.out.println(analysis);
+		    	
+		    	App app = new App(entity,startDate,endDate,country,gender,analysis);
+		    	
+		    	json = app.getData();
+		    	mainjson.put(json);
+			}
+	    	
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return mainjson.toString();
+    	//return new Greeting(counter.incrementAndGet(),String.format(template, name),"new program");
+    }
+    
+    @RequestMapping(value="/compare_map",method = RequestMethod.GET)
+    public @ResponseBody String todo_compare_map(
+    		@RequestParam(value="entity", required=false, defaultValue="twitter") String entities,
+            @RequestParam(value="start", required=false, defaultValue="2014-08-01") String start,
+            @RequestParam(value="end", required=false, defaultValue="2014-08-02") String end ,
+            @RequestParam(value="gender", required=false, defaultValue="all") String gender ,
+            @RequestParam(value="geo", required=false, defaultValue="all") String country,
+            @RequestParam(value="analysis", required=false, defaultValue="mention") String analysis) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
+    	
+    	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+     
+    	Date startDate;
+    	Date endDate;
+    	
+    	String en[] = entities.split(",");
+    	
+    	JSONArray mainjson = new JSONArray();
+    	
+    	JSONObject json = new JSONObject();
+		try {
+			for (String entity : en){
+				startDate = formatter.parse(start);
+		    	endDate = formatter.parse(end);
+		    	System.out.println(startDate);
+		    	System.out.println(endDate);
+		    	System.out.println("Time ananlysis for the Required Interval");
+		    	
+		    	App app = new App(entity,startDate,endDate,country,gender,analysis);
+		    	
+		    	json = app.getMap();
+		    	mainjson.put(json);
+			}
+	    	
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return mainjson.toString();
+    	//return new Greeting(counter.incrementAndGet(),String.format(template, name),"new program");
+    }
+    
+    @RequestMapping(value="/compare_pie",method = RequestMethod.GET)
+    public @ResponseBody String todo_compare_pie(
+    		@RequestParam(value="pie", required=false, defaultValue="0") int pieVal,
+    		@RequestParam(value="entity", required=false, defaultValue="apple") String entities,
+            @RequestParam(value="start", required=false, defaultValue="2014-08-01") String start,
+            @RequestParam(value="end", required=false, defaultValue="2014-08-02") String end ,
+            @RequestParam(value="gender", required=false, defaultValue="all") String gender ,
+            @RequestParam(value="geo", required=false, defaultValue="all") String country,
+            @RequestParam(value="analysis", required=false, defaultValue="mention") String analysis) throws ClassNotFoundException, SQLException, TwitterException, JSONException {
+    	
+    	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+     
+    	Date startDate;
+    	Date endDate;
+    	
+    	String en[] = entities.split(",");
+    	
+    	JSONArray mainjson = new JSONArray();
+    	
+    	JSONArray json = new JSONArray();
+		try {
+			for (String entity : en){
+				startDate = formatter.parse(start);
+		    	endDate = formatter.parse(end);
+		    	System.out.println(startDate);
+		    	System.out.println(endDate);
+		    	System.out.println("Time ananlysis for the Required Interval");
+		    	
+		    	App app = new App(entity,startDate,endDate,country,gender,pieVal,analysis);
+		    	
+		    	json = app.getPie();
+		    	mainjson.put(json);
+			}
 	    	
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
