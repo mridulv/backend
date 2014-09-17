@@ -88,19 +88,19 @@ public class SideBar {
 	}
 	
 	public JSONArray getKeywordInformation() throws JSONException, ClassNotFoundException, SQLException, InvalidFormatException, IOException{
-        String query = "SELECT * FROM analysis_tweets_new "+init_query+" and lang LIKE 'en'";
+        String query = "SELECT * FROM final_tweet_analysis "+init_query+" and lang LIKE 'en'";
 		JSONArray mainjson = info.getKeywordInfo(query);
 		return mainjson;
 	}
 	
 	public JSONArray getHashTagInformation() throws ClassNotFoundException, SQLException, JSONException{
-        String query = "SELECT * FROM analysis_tweets_new "+init_query;
+        String query = "SELECT * FROM final_tweet_analysis "+init_query;
         JSONArray mainjson = info.getInfo(query);
         return mainjson;
 	}
 	
 	public JSONArray getTrendingInformation() throws ClassNotFoundException, SQLException, JSONException{
-		String query = "SELECT * FROM analysis_tweets_new ORDER BY seconds DESC LIMIT 1000";
+		String query = "SELECT * FROM final_tweet_analysis ORDER BY seconds DESC LIMIT 1000";
 		JSONArray mainjson = info.getInfo(query);
 		return mainjson;
 	}
@@ -128,7 +128,7 @@ public class SideBar {
 		Class.forName(conn.dbClass);
         Connection connection = (Connection) DriverManager.getConnection(conn.dbUrl, conn.username, conn.password);
 
-        String query = "SELECT mention_id,avg(rating) as total FROM analysis_tweets_new where key_val LIKE '1%' GROUP BY mention_id ORDER BY total DESC";
+        String query = "SELECT mention_id,avg(rating) as total FROM final_tweet_analysis where key_val LIKE '1%' GROUP BY mention_id ORDER BY total DESC";
         Statement stmt = (Statement) connection.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         long count = 0;

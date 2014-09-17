@@ -48,28 +48,41 @@ public class UserSideBar {
 		Class.forName(conn.dbClass);
         Connection connection = (Connection) DriverManager.getConnection(conn.dbUrl, conn.username, conn.password);
         
-        String query = "SELECT count(*) as total,MAX(retweet) as max ,tweet , AVG(retweet) as aver , AVG(rating) as rating  FROM analysis_tweets_new WHERE user_id = "+ id;
+        String query = "SELECT tweet , COUNT( * ) , AVG( a.rating ) as aver , MAX( a.rating ) as max FROM ( SELECT *  FROM  final_tweet_analysis  WHERE user_id = " + id + " ) AS a";
+        String query2 = "SELECT * FROM final_tweet_analysis WHERE  rating=(SELECT MAX(rating) FROM final_tweet_analysis where user_id =" + id + ") and user_id = " + id;
+        System.out.println(query2);
         
-        System.out.println(query);
         Statement stmt = (Statement) connection.createStatement();
         ResultSet rs = stmt.executeQuery(query);
+        
+        Statement stmt2 = (Statement) connection.createStatement();
+        ResultSet rs2 = stmt2.executeQuery(query2);
+        
+        rs2.next();
         
         String tweet;
         JSONObject json = new JSONObject();        
         while(rs.next()){
-        	double rating  = rs.getDouble("rating");
-        	rating = (rating + (61.8149737505)*rating + 9972.69849548)/2;
+        	tweet = rs2.getString("tweet");
+        	
         	double retweet = rs.getDouble("aver");
-        	tweet = rs.getString("tweet");
+        	retweet = (2*retweet - 132.30818861707201)/1.88490419729401604;
+        	long se_retweet = (long) retweet;
+        	
+        	double max = rs.getDouble("max");
+        	max = (2*max - 132.30818861707201)/1.88490419729401604;
+        	long se_max = (long)max;
+        	
+        	System.out.println(se_max);
+        	
         	json.put("followers", followers);
         	json.put("image", url);
-        	json.put("rating", rating);
-        	json.put("retweet", retweet);
+        	json.put("rating", se_retweet);
+        	json.put("retweet", se_max);
         	json.put("tweet", tweet);
         	mainjson.put(json);
         }
         
         return mainjson;
 	}
-	
 }

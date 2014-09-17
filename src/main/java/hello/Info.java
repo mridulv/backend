@@ -28,6 +28,12 @@ import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
 
 public class Info {
+    public static String removeURLS(String text)
+    {
+        String regexp = "\\(?\\bhttps?://[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
+        text = text.replaceAll(regexp,"");
+        return text;
+    }
 	public JSONArray getKeywordInfo(String query) throws InvalidFormatException, IOException, SQLException, ClassNotFoundException, JSONException{
 		InputStream modelIn = new FileInputStream("C:\\Users\\mridul.v\\Downloads\\twitter_Project\\en-token.bin");
         TokenizerModel model = new TokenizerModel(modelIn);
@@ -62,7 +68,7 @@ public class Info {
             double rating = rs.getLong("rating");
 
             int keyword_value = 0;
-            text = text.toLowerCase().replaceAll("@\\p{L}+","").replaceAll("#\\p{L}+", "").replaceAll("[^'\\w\\s\\,]", "").replaceAll("'\\p{L}+"," ").replaceAll("http\\s*(\\w+)", "");
+            text = removeURLS(text.toLowerCase()).replaceAll("@\\p{L}+","").replaceAll("#\\p{L}+", "").replaceAll("[^\\w\\s\\,]", " ");
             String tokens[] = tokenizer.tokenize(text);
             String arrText[] = tagger.tag(tokens);
             
@@ -70,13 +76,15 @@ public class Info {
                 java.util.regex.Matcher matcher = Pattern.compile("N\\s*(\\w+)").matcher(match);
                 if (matcher.find()){
                     String group = tokens[keyword_value];
-                    if (hashMap.containsKey(group)) {
-                        double value = hashMap.get(group);
-                        value = value + rating;
-                        hashMap.put(group,value);
-                    } else {
-                        double value = rating;
-                        hashMap.put(group, value);
+                    if ((!stopwords.is(group)) && group.length() > 2) {
+	                    if (hashMap.containsKey(group)) {
+	                        double value = hashMap.get(group);
+	                        value = value + rating;
+	                        hashMap.put(group,value);
+	                    } else {
+	                        double value = rating;
+	                        hashMap.put(group, value);
+	                    }
                     }
                 }
                 keyword_value++;
@@ -89,6 +97,7 @@ public class Info {
             String queryNew = "SELECT * FROM keywords_new WHERE term LIKE '"+key+"' ";
             Statement stmtNew = (Statement) connection.createStatement();
             ResultSet rsNew = stmtNew.executeQuery(queryNew);
+            
             
             if (rsNew.absolute(1)){
          	   double num = rsNew.getDouble("value");
@@ -157,6 +166,7 @@ public class Info {
              Statement stmtNew = (Statement) connection.createStatement();
              ResultSet rsNew = stmtNew.executeQuery(queryNew);
              
+             hashMap2.put(key,0.0);
              if (rsNew.absolute(1)){
           	   double num = rsNew.getDouble("value");
           	   value = value/num;

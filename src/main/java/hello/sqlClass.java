@@ -121,7 +121,7 @@ public class sqlClass {
         
         Date startDate = new Date();
         //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
-        String query = "SELECT * FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+        String query = "SELECT * FROM final_tweet_analysis "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
         
         if (!geo.equals("world"))
         	query = query + " and country LIKE '"+geo+"%'";
@@ -181,16 +181,16 @@ public class sqlClass {
         //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
         String query;
         if (analysis == 0){
-        	query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+        	query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM final_tweet_analysis "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
         }
 		else if (analysis == 1){
-			query = "SELECT sum(sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " and sentiment > 0";
+			query = "SELECT sum(sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM final_tweet_analysis "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " and sentiment > 0";
 		}
 		else if (analysis == 2){
-			query = "SELECT sum(sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " and sentiment < 0";
+			query = "SELECT sum(sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM final_tweet_analysis "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " and sentiment < 0";
 		}
 		else{
-			query = "SELECT sum(rating*sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+			query = "SELECT sum(rating*sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM final_tweet_analysis "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
 		}
         
         if (!geo.equals("world"))
@@ -242,16 +242,16 @@ public class sqlClass {
 		    //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
 		    String query;
 	        if (analysis == 0){
-	        	query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+	        	query = "SELECT count(*) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM final_tweet_analysis "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
 	        }
 			else if (analysis == 1){
-				query = "SELECT sum(sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " and sentiment > 0";
+				query = "SELECT sum(sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM final_tweet_analysis "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " and sentiment > 0";
 			}
 			else if (analysis == 2){
-				query = "SELECT sum(sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " and sentiment < 0";
+				query = "SELECT sum(sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM final_tweet_analysis "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " and sentiment < 0";
 			}
 			else{
-				query = "SELECT sum(rating*sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+				query = "SELECT sum(rating*sentiment) AS val , GROUP_CONCAT(id SEPARATOR ', ') as ids, country FROM final_tweet_analysis "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
 			}
 		    
 		    if (!geo.equals("world"))
@@ -293,7 +293,7 @@ public class sqlClass {
 		    }
         }
         else {
-        	String query = "SELECT * FROM analysis_tweets_new "+init_query+"";
+        	String query = "SELECT * FROM final_tweet_analysis "+init_query+"";
         	System.out.println(query);
 
             ResultSet rs = stmt.executeQuery(query);
@@ -380,7 +380,7 @@ public class sqlClass {
         
         Date startDate = new Date();
         //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
-        String query = "SELECT * FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+        String query = "SELECT * FROM final_tweet_analysis "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
         
         if (!geo.equals("world"))
         	query = query + " and country LIKE '"+geo+"%'";
@@ -469,7 +469,7 @@ public JSONArray getTrendResult2() throws ClassNotFoundException, SQLException, 
         
         Date startDate = new Date();
         //String query = "SELECT * FROM tweets WHERE key_val LIKE '"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
-        String query = "SELECT * FROM analysis_tweets_new WHERE key_val LIKE '1"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
+        String query = "SELECT * FROM final_tweet_analysis WHERE key_val LIKE '1"+String.valueOf(id)+"%' and seconds < " + endTime + " and seconds > " + startTime + " ";
         
         if (!geo.equals("world"))
         	query = query + " and country LIKE '"+geo+"%'";

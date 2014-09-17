@@ -43,7 +43,7 @@ public class UserGraph {
 		Class.forName(conn.dbClass);
         Connection connection = (Connection) DriverManager.getConnection(conn.dbUrl, conn.username, conn.password);
 
-        String query = "SELECT * FROM analysis_tweets_new where user_id ="+id;
+        String query = "SELECT * FROM final_tweet_analysis where user_id ="+id;
 
         Statement stmt = (Statement) connection.createStatement();
         ResultSet rs = stmt.executeQuery(query);

@@ -77,7 +77,6 @@ public class MainBar {
             hashPresent = 0;
     	}
     	else if(entity.charAt(0) == '#'){
-    		System.out.println("idhar hooaoaaaoa");
     		entity = entity.substring(1,entity.length());
     		hashPresent = 1;
     	}
@@ -106,7 +105,7 @@ public class MainBar {
 	
 	public JSONArray getKeywordInformation() throws JSONException, ClassNotFoundException, SQLException, InvalidFormatException, IOException{
         
-		String query = "SELECT * FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+		String query = "SELECT * FROM final_tweet_analysis "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
         System.out.println(query);
         
         if (!geo.equals("world"))
@@ -120,7 +119,7 @@ public class MainBar {
 	
 	public JSONArray getHashTagInformation() throws ClassNotFoundException, SQLException, JSONException{
         
-		String query = "SELECT * FROM analysis_tweets_new "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
+		String query = "SELECT * FROM final_tweet_analysis "+init_query+" and seconds < " + endTime + " and seconds > " + startTime + " ";
 		System.out.println(query);
         
         if (!geo.equals("world"))
@@ -139,20 +138,23 @@ public class MainBar {
         Connection connection = (Connection) DriverManager.getConnection(conn.dbUrl, conn.username, conn.password);
 
         Map<Long, Long> hashMap = new HashMap<Long, Long>();
+        Map<Long, String> hashName = new HashMap<Long, String>();
         helper2 bvc = new helper2(hashMap);
         TreeMap<Long, Long> sorted_map = new TreeMap<Long, Long>(bvc);
 
-        String query = "SELECT count(*) as total, avg(rating) as rating_avg, followers , user_id from analysis_tweets_new "+init_query+" GROUP BY user_id";
+        String query = "SELECT username,count(*) as total, avg(rating) as rating_avg, followers , user_id from final_tweet_analysis "+init_query+" GROUP BY user_id";
         System.out.println(query);
         Statement stmt = (Statement) connection.createStatement();
         ResultSet rs = stmt.executeQuery(query);
 
         while (rs.next()){
             long user_id = rs.getLong("user_id");
+            String username = rs.getString("username");
             double rating_avg = rs.getLong("rating_avg");
 
             double normalized_rating = (rating_avg + (61.8149737505)*rating_avg + 9972.69849548)/2;
             hashMap.put(user_id,(long)rating_avg);
+            hashName.put(user_id,username);
         }
 
         sorted_map.putAll(hashMap);
@@ -164,12 +166,10 @@ public class MainBar {
                 break;
             System.out.println("the maximum influential user id " + entry.getKey() + " with a score of " + entry.getValue());
             JSONObject json = new JSONObject();
-            if (!getUser(entry.getKey()).equals("unknown")){
-	            json.put("user", getUser(entry.getKey()));
-	            json.put("score", entry.getValue());
-	            mainjson.put(json);
-	            count++;
-            }
+            json.put("user", hashName.get(entry.getKey()));
+            json.put("score", entry.getValue());
+            mainjson.put(json);
+            count++;
         }
 		
 		return mainjson;
@@ -184,6 +184,7 @@ public class MainBar {
         java.util.Date startDate = new java.util.Date();
 
         Map<Long,Double> hashMap = new HashMap<Long, Double>();
+        Map<Long, String> hashName = new HashMap<Long, String>();
         helper4 bvc =  new helper4(hashMap);
         TreeMap<Long,Double> sorted_map = new TreeMap<Long,Double>(bvc);
 
@@ -195,6 +196,7 @@ public class MainBar {
 
         while (rsAux.next()) {
             long user = rsAux.getLong("user_id");
+            String username = rsAux.getString("username");
             long rating = rsAux.getLong("rating");
 
             Map<String, Double> myMapAux = new HashMap<String, Double>();
@@ -222,6 +224,7 @@ public class MainBar {
                 score = score * rating;
 
                 hashMap.put(user , score);
+                hashName.put(user, username);
             }
         }
 
@@ -231,7 +234,8 @@ public class MainBar {
         int count = 0 ;
 
         for (Map.Entry<Long , Double> entry : sorted_map.entrySet()) {
-            String query2 = "SELECT * FROM analysis_tweets_new WHERE key_val LIKE '1"+entity+"%' and user_id = " +entry.getKey();
+            String query2 = "SELECT * FROM final_tweet_analysis "+init_query+" and user_id = " +entry.getKey();
+            System.out.println(query2);
             Statement stmt2 = (Statement) connection2.createStatement();
             ResultSet rs2 = stmt2.executeQuery(query2);
             if (count == 5)
@@ -239,12 +243,10 @@ public class MainBar {
             if (!rs2.next()){
                 System.out.println("the maximum correlated user id " + entry.getKey() + " with a score of " + entry.getValue());
                 JSONObject json = new JSONObject();
-                if (!getUser(entry.getKey()).equals("unknown")){
-	                json.put("user", getUser(entry.getKey()));
-	                json.put("score", entry.getValue());
-	                mainjson.put(json);
-	                count++;
-                }
+                json.put("user", hashName.get(entry.getKey()));
+                json.put("score", entry.getValue());
+                mainjson.put(json);
+                count++;
             }
         }
 		return mainjson;
@@ -264,7 +266,7 @@ public class MainBar {
         Connection connection = (Connection) DriverManager.getConnection(conn.dbUrl, conn.username, conn.password);
         Connection connection2 = (Connection) DriverManager.getConnection(conn.dbUrl, conn.username, conn.password);
 
-        String query = "SELECT * from analysis_tweets_new "+init_query+" and lang LIKE 'en'";
+        String query = "SELECT * from final_tweet_analysis "+init_query+" and lang LIKE 'en'";
         System.out.println(query);
 
         Statement stmt = (Statement) connection.createStatement();
@@ -284,21 +286,25 @@ public class MainBar {
             double rating = rs.getDouble("rating");
 
             int keyword_value = 0;
-            arr = arr.toLowerCase().replaceAll("@\\p{L}+","").replaceAll("#\\p{L}+", "").replaceAll("[^'\\w\\s\\,]", "").replaceAll("'\\p{L}+"," ").replaceAll("'"," ").replaceAll("http\\s*(\\w+)", "");
+            arr = removeURLS(arr.toLowerCase()).replaceAll("@\\p{L}+","").replaceAll("#\\p{L}+", "").replaceAll("[^'\\w\\s\\,]", "").replaceAll("'\\p{L}+"," ").replaceAll("'"," ");
             String tokens[] = tokenizer.tokenize(arr);
             String arrText[] = tagger.tag(tokens);
 
+            Stopwords stopwords = new Stopwords();
+            
             for (String match : arrText) {
                 Matcher matcher = Pattern.compile("N\\s*(\\w+)").matcher(match);
                 if (matcher.find()){
                     String group = tokens[keyword_value];
-                    if (hashMap.containsKey(group)) {
-                        double value = hashMap.get(group);
-                        value = value + rating;
-                        hashMap.put(group, value);
-                    } else {
-                        double value = rating;
-                        hashMap.put(group, value);
+                    if ((!stopwords.is(group)) && group.length() > 2) {
+		                    if (hashMap.containsKey(group)) {
+		                        double value = hashMap.get(group);
+		                        value = value + rating;
+		                        hashMap.put(group, value);
+		                    } else {
+		                        double value = rating;
+		                        hashMap.put(group, value);
+		                    }
                     }
                 }
                 keyword_value++;
@@ -324,18 +330,11 @@ public class MainBar {
         return sorted_map;
     }
 	
-	private String getUser(long id){
-		Twitter twitter = new TwitterFactory().getInstance();
-		System.out.println(id);
-		User user;
-		try {
-			user = twitter.showUser(id);
-			return user.getScreenName();
-		} catch (TwitterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return "unknown";
-		}
-	}
+	public static String removeURLS(String text)
+    {
+        String regexp = "\\(?\\bhttps?://[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
+        text = text.replaceAll(regexp,"");
+        return text;
+    }
 	
 }

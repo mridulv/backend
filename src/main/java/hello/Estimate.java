@@ -11,6 +11,7 @@ import opennlp.tools.tokenize.TokenizerModel;
 import weka.core.Stopwords;
 
 import javax.xml.crypto.dom.DOMCryptoContext;
+
 import java.io.*;
 import java.sql.*;
 import java.util.HashMap;
@@ -19,13 +20,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Estimate {
-
+	public static String removeURLS(String text)
+    {
+        String regexp = "\\(?\\bhttps?://[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
+        text = text.replaceAll(regexp,"");
+        return text;
+    }
     public static double findRelation(String tweet ,Tokenizer tokenizer,POSTaggerME tagger , Connection connection) throws SQLException {
 
-        tweet = tweet.toLowerCase().replaceAll("@\\p{L}+","").replaceAll("#\\p{L}+", "").replaceAll("[^'\\w\\s\\,]", "").replaceAll("http\\s*(\\w+)", "");
+    	tweet = removeURLS(tweet.toLowerCase()).replaceAll("@\\p{L}+","").replaceAll("#\\p{L}+", "").replaceAll("[^\\w\\s\\,]", " ");
         String tokens[] = tokenizer.tokenize(tweet);
         String arrText[] = tagger.tag(tokens);
 
+        Stopwords stopwords = new Stopwords();
+        
         double score = 0;
         int count = 0;
         int keyword_value = 0;
@@ -33,18 +41,20 @@ public class Estimate {
             Matcher matcher = Pattern.compile("N\\s*(\\w+)").matcher(match);
             if (matcher.find()) {
                 String group = tokens[keyword_value];
-                System.out.println(tokens[keyword_value]);
-                String query = "SELECT * FROM keywords_new where term = '"+group+"' and count_val > 1";
-                Statement stmt = connection.createStatement();
-                ResultSet rs = stmt.executeQuery(query);
-                if (rs.next())
-                {
-                    double newScore = rs.getDouble("value");
-                    long val = rs.getLong("count_val");
-
-                    score = score + newScore/(val-1);
+                if ((!stopwords.is(group)) && group.length() > 2) {
+	                System.out.println(tokens[keyword_value]);
+	                String query = "SELECT * FROM keywords_new where term = '"+group+"' and count_val > 1";
+	                Statement stmt = connection.createStatement();
+	                ResultSet rs = stmt.executeQuery(query);
+	                if (rs.next())
+	                {
+	                    double newScore = rs.getDouble("value");
+	                    long val = rs.getLong("count_val");
+	
+	                    score = score + newScore/(val-1);
+	                }
+	                count++;
                 }
-                count++;
             }
             keyword_value++;
         }
